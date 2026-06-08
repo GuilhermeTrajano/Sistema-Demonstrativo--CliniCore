@@ -1,0 +1,212 @@
+import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+import {
+  AlertTriangle,
+  CalendarCheck,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from 'lucide-react'
+import { useData } from '../context/DataContext'
+import {
+  REFERENCE_DATE,
+  monthlyRevenue,
+  occupancyData,
+  opportunityQueue,
+  specialtyDistribution,
+} from '../data/mockData'
+import { currency, formatDateLong } from '../utils/helpers'
+import Avatar from '../components/Avatar'
+import StatusBadge from '../components/StatusBadge'
+import './Dashboard.css'
+
+function StatCard({ icon: Icon, label, value, foot, tone = 'blue' }) {
+  return (
+    <div className={`card stat-card fade-up tone-${tone}`}>
+      <div className="stat-top">
+        <span className="stat-icon"><Icon size={20} /></span>
+        <span className="stat-delta up"><TrendingUp size={14} /> demo</span>
+      </div>
+      <div className="stat-value">{value}</div>
+      <div className="stat-label">{label}</div>
+      <div className="stat-foot">{foot}</div>
+    </div>
+  )
+}
+
+export default function Dashboard() {
+  const { appointments, patients, doctors } = useData()
+  const navigate = useNavigate()
+
+  const todayAppts = useMemo(
+    () => appointments.filter((a) => a.date === REFERENCE_DATE),
+    [appointments],
+  )
+  const activeAppts = todayAppts.filter((a) => a.status !== 'cancelada')
+  const cancelled = todayAppts.filter((a) => a.status === 'cancelada')
+  const waiting = patients.filter((p) => p.waitlist)
+  const occupancy = Math.round((activeAppts.length / 16) * 100)
+  const upcoming = activeAppts.sort((a, b) => a.time.localeCompare(b.time)).slice(0, 6)
+
+  return (
+    <div className="dashboard">
+      <section className="dash-hero fade-up">
+        <div>
+          <span className="hero-eyebrow">CliniCore - Plataforma Inteligente para Gestão de Clínicas</span>
+          <h2>Operação clínica com agenda, pacientes e oportunidades no mesmo painel.</h2>
+          <p style={{ textTransform: 'capitalize' }}>{formatDateLong(REFERENCE_DATE)}</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate('/agendamento')}>
+          <CalendarCheck size={17} /> Nova consulta
+        </button>
+      </section>
+
+      <div className="stat-grid">
+        <StatCard icon={CalendarCheck} label="Consultas hoje" value={todayAppts.length} foot={`${occupancy}% da capacidade diaria`} />
+        <StatCard icon={TrendingUp} label="Taxa de ocupação" value={`${occupancy}%`} foot="Meta semanal entre 85% e 95%" tone="teal" />
+        <StatCard icon={DollarSign} label="Receita prevista" value={currency(28400)} foot="Agenda confirmada de hoje" tone="green" />
+        <StatCard icon={Users} label="Pacientes aguardando encaixe" value={waiting.length} foot={`${opportunityQueue.length} sugestoes priorizadas`} tone="orange" />
+      </div>
+
+      <div className="dash-grid-2">
+        <div className="card card-pad chart-card fade-up">
+          <div className="row between center" style={{ marginBottom: 18 }}>
+            <div>
+              <h3 className="section-title">Ocupação da agenda</h3>
+              <p className="muted text-sm">Taxa de ocupação da clínica durante a semana</p>
+            </div>
+            <span className="badge badge-info">75% - 95%</span>
+          </div>
+          <ResponsiveContainer width="100%" height={270}>
+            <AreaChart data={occupancyData} margin={{ left: -18, right: 10, top: 8 }}>
+              <defs>
+                <linearGradient id="occupancyGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#2563EB" stopOpacity={0.28} />
+                  <stop offset="100%" stopColor="#2563EB" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="dia" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+              <YAxis domain={[70, 100]} ticks={[75, 80, 85, 90, 95]} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} tickFormatter={(v) => `${v}%`} />
+              <Tooltip formatter={(v) => [`${v}%`, 'Ocupacao']} contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0' }} />
+              <Area type="monotone" dataKey="ocupacao" stroke="#2563EB" strokeWidth={3} fill="url(#occupancyGradient)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="card card-pad fade-up opportunity-mini">
+          <div className="row gap-2 center" style={{ marginBottom: 12 }}>
+            <Sparkles size={18} className="brand-ico" />
+            <h3 className="section-title">Central de oportunidades</h3>
+          </div>
+          <div className="slot-alert">
+            <AlertTriangle size={18} />
+            <div>
+              <strong>Vaga aberta as 15h</strong>
+              <span>Sugestão automática: Ana Costa</span>
+            </div>
+          </div>
+          {opportunityQueue.slice(0, 3).map((item) => {
+            const p = patients.find((x) => x.id === item.patientId)
+            return (
+              <div className="opportunity-row" key={item.id}>
+                <Avatar name={p?.name} size={36} />
+                <div className="grow">
+                  <div className="fw-700">{p?.name}</div>
+                  <div className="cell-sub">Disponibilidade: {item.availability.join(', ')}</div>
+                </div>
+              </div>
+            )
+          })}
+          <button className="btn btn-secondary btn-block" onClick={() => navigate('/oportunidades')}>
+            Abrir central <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div className="dash-grid-2b">
+        <div className="card card-pad fade-up">
+          <h3 className="section-title" style={{ marginBottom: 4 }}>Receita mensal</h3>
+          <p className="muted text-sm" style={{ marginBottom: 16 }}>Primeiro semestre de 2026</p>
+          <ResponsiveContainer width="100%" height={230}>
+            <BarChart data={monthlyRevenue} margin={{ left: -6, right: 6, top: 6 }}>
+              <XAxis dataKey="mes" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v) => `${v / 1000}k`} />
+              <Tooltip cursor={{ fill: 'rgba(37,99,235,0.06)' }} formatter={(v) => [currency(v), 'Receita']} contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0' }} />
+              <Bar dataKey="receita" radius={[6, 6, 0, 0]} maxBarSize={42}>
+                {monthlyRevenue.map((_, i) => <Cell key={i} fill={i === monthlyRevenue.length - 1 ? '#2563EB' : '#cbd5e1'} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="card card-pad fade-up">
+          <h3 className="section-title" style={{ marginBottom: 4 }}>Distribuicao por especialidade</h3>
+          <p className="muted text-sm" style={{ marginBottom: 8 }}>Mix de atendimentos do mes</p>
+          <ResponsiveContainer width="100%" height={230}>
+            <PieChart>
+              <Pie data={specialtyDistribution} dataKey="value" nameKey="name" innerRadius={52} outerRadius={82} paddingAngle={3} stroke="none">
+                {specialtyDistribution.map((s) => <Cell key={s.name} fill={s.color} />)}
+              </Pie>
+              <Tooltip formatter={(v) => [`${v}%`, '']} contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0' }} />
+              <Legend iconType="circle" wrapperStyle={{ fontSize: 12.5 }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card fade-up">
+        <div className="row between center card-pad" style={{ paddingBottom: 14 }}>
+          <div>
+            <h3 className="section-title">Próximas consultas de hoje</h3>
+            <p className="muted text-sm">Agenda em tempo real</p>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={() => navigate('/agenda')}>Ver agenda <ChevronRight size={15} /></button>
+        </div>
+        <div className="table-wrap">
+          <table className="data">
+            <thead><tr><th>Horario</th><th>Paciente</th><th>Medico</th><th>Tipo</th><th>Status</th></tr></thead>
+            <tbody>
+              {upcoming.map((a) => {
+                const p = patients.find((x) => x.id === a.patientId)
+                const d = doctors.find((x) => x.id === a.doctorId)
+                return (
+                  <tr key={a.id}>
+                    <td><span className="time-pill"><Clock size={13} /> {a.time}</span></td>
+                    <td><div className="row gap-3 center"><Avatar name={p?.name} size={34} /><span className="fw-600">{p?.name}</span></div></td>
+                    <td><div className="row gap-2 center"><span className="doc-dot" style={{ background: d?.color }} /><span className="text-sm">{d?.name}</span></div></td>
+                    <td><span className="badge badge-neutral">{a.type}</span></td>
+                    <td><StatusBadge status={a.status} /></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <section className="portfolio-panel fade-up">
+        <div><h3>Problema</h3><p>Clínicas perdem produtividade com cancelamentos, encaixes manuais e baixa visibilidade operacional.</p></div>
+        <div><h3>Solução</h3><p>Plataforma de gestão com agenda inteligente, acompanhamento de pacientes e otimização da ocupação.</p></div>
+        <div><h3>Tecnologias</h3><p>React, TypeScript, .NET, PostgreSQL</p></div>
+        <div><h3>Destaques</h3><p>Dashboard analítico, gestão de pacientes, agenda inteligente e sugestão automática de encaixes.</p></div>
+      </section>
+    </div>
+  )
+}
