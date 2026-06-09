@@ -116,17 +116,6 @@
 .tone-teal .stat-icon { background: #ccfbf1; color: #0f766e; }
 .tone-green .stat-icon { background: var(--success-bg); color: var(--success); }
 .tone-orange .stat-icon { background: var(--warning-bg); color: var(--warning); }
-.stat-delta {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 99px;
-}
-.stat-delta.up { color: var(--success); background: var(--success-bg); }
-.stat-delta.down { color: var(--danger); background: var(--danger-bg); }
 .stat-value {
   font-size: 28px;
   font-weight: 800;
@@ -263,35 +252,9 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--slate-100);
 }
-.portfolio-panel {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--border);
-}
-.portfolio-panel > div {
-  background: var(--surface);
-  padding: 18px;
-}
-.portfolio-panel h3 {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--brand-600);
-  margin-bottom: 8px;
-}
-.portfolio-panel p {
-  color: var(--slate-700);
-  font-size: 13.5px;
-}
-
 @media (max-width: 1100px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .dash-grid-2, .dash-grid-2b { grid-template-columns: 1fr; }
-  .portfolio-panel { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
   .stat-grid { grid-template-columns: 1fr; }
@@ -300,5 +263,4 @@
   .chart-head { flex-direction: column; }
   .chart-filters { width: 100%; justify-content: flex-start; }
   .chart-select { flex: 1; min-width: 130px; }
-  .portfolio-panel { grid-template-columns: 1fr; }
 }

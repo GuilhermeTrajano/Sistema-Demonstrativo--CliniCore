@@ -19,7 +19,7 @@ const GT_CORE_URL = 'https://gtcore.vercel.app/'
 
 function GTCoreLink({ children }) {
   return (
-    <a className="gtcore-link" href={GT_CORE_URL} target="_blank" rel="noreferrer">
+    <a className="gt-link" href={GT_CORE_URL} target="_blank" rel="noopener">
       {children}
     </a>
   )

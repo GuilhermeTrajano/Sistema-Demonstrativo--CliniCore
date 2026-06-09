@@ -82,7 +82,6 @@ function StatCard({ icon: Icon, label, value, foot, tone = 'blue' }) {
     <div className={`card stat-card fade-up tone-${tone}`}>
       <div className="stat-top">
         <span className="stat-icon"><Icon size={20} /></span>
-        <span className="stat-delta up"><TrendingUp size={14} /> demo</span>
       </div>
       <div className="stat-value">{value}</div>
       <div className="stat-label">{label}</div>
@@ -322,12 +321,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="portfolio-panel fade-up">
-        <div><h3>Problema</h3><p>Clínicas perdem produtividade com cancelamentos, encaixes manuais e baixa visibilidade operacional.</p></div>
-        <div><h3>Solução</h3><p>Plataforma de gestão com agenda inteligente, acompanhamento de pacientes e otimização da ocupação.</p></div>
-        <div><h3>Tecnologias</h3><p>React, TypeScript, .NET, PostgreSQL</p></div>
-        <div><h3>Destaques</h3><p>Dashboard analítico, gestão de pacientes, agenda inteligente e sugestão automática de encaixes.</p></div>
-      </section>
     </div>
   )
 }

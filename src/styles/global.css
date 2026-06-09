@@ -88,13 +88,29 @@ a {
   text-decoration: none;
 }
 
-.gtcore-link {
+/* Link "GT Core": herda a cor do contexto, sublinhado animado no hover */
+.gt-link {
   color: inherit;
+  font-weight: 700;
+  position: relative;
   text-decoration: none;
-  text-underline-offset: 3px;
+  transition: color 0.25s;
 }
-.gtcore-link:hover {
-  text-decoration: underline;
+.gt-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.25s;
+}
+.gt-link:hover {
+  color: var(--brand-500);
+}
+.gt-link:hover::after {
+  width: 100%;
 }
 
 button {
@@ -326,11 +342,12 @@ table.data tbody tr:last-child td {
   align-items: center;
   justify-content: center;
   border-radius: 99px;
-  font-weight: 700;
+  font-weight: 800;
   color: #fff;
   flex-shrink: 0;
   background: var(--brand-500);
   letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.35);
 }
 
 /* ---------- Utilities ---------- */

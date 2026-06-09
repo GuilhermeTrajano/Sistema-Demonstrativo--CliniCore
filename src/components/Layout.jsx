@@ -19,7 +19,7 @@ const GT_CORE_URL = 'https://gtcore.vercel.app/'
 
 function GTCoreLink({ children, className = '' }) {
   return (
-    <a className={`gtcore-link ${className}`} href={GT_CORE_URL} target="_blank" rel="noreferrer">
+    <a className={`gt-link ${className}`} href={GT_CORE_URL} target="_blank" rel="noopener">
       {children}
     </a>
   )
@@ -148,8 +148,36 @@ export default function Layout() {
         <main className="content">
           <Outlet />
         </main>
-        <footer className="app-footer">
-          © <GTCoreLink>GT Core</GTCoreLink> — Projeto de Portfólio
+
+        <section className="portfolio" aria-label="Sobre este projeto demonstrativo">
+          <div className="container">
+            <p className="portfolio__eyebrow">
+              <GTCoreLink>GT Core</GTCoreLink> · Projeto Demonstrativo
+            </p>
+            <div className="portfolio__grid">
+              <div className="portfolio__item">
+                <h4>Problema</h4>
+                <p>Clínicas perdem produtividade com cancelamentos, encaixes manuais e baixa visibilidade operacional.</p>
+              </div>
+              <div className="portfolio__item">
+                <h4>Solução</h4>
+                <p>Plataforma de gestão com agenda inteligente, acompanhamento de pacientes e otimização da ocupação.</p>
+              </div>
+              <div className="portfolio__item">
+                <h4>Tecnologias</h4>
+                <p>React, React Router, Recharts, Vite, CSS3, Design Responsivo.</p>
+              </div>
+              <div className="portfolio__item">
+                <h4>Destaques</h4>
+                <p>Dashboard analítico, gestão de pacientes, agenda inteligente e sugestão automática de encaixes.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="app-footer footer__bottom">
+          <span>© 2026 CliniCore. Demonstração — empresa fictícia.</span>
+          <span>© <GTCoreLink>GT Core</GTCoreLink> — Projeto de Portfólio</span>
         </footer>
       </div>
     </div>
